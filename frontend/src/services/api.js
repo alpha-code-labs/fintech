@@ -1,11 +1,24 @@
-import axios from 'axios';
+// Local data imports — no backend needed for demo
+// When backend is ready, swap these back to axios calls
+import macroData from '../data/macro.json';
+import scannerData from '../data/scanner.json';
+import portfolioData from '../data/portfolio.json';
+import briefingData from '../data/briefing.json';
+import abclData from '../data/stocks/ABCL.json';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const stocksMap = {
+  ABCL: abclData,
+};
 
-const api = axios.create({ baseURL: API_BASE });
+// Simulate async API calls (keeps the same interface as real API)
+const delay = (data) => new Promise((resolve) => setTimeout(() => resolve(data), 200));
 
-export const getMacro = () => api.get('/api/macro').then(r => r.data);
-export const getScanner = () => api.get('/api/scanner').then(r => r.data);
-export const getStock = (symbol) => api.get(`/api/stock/${symbol}`).then(r => r.data);
-export const getPortfolio = () => api.get('/api/portfolio').then(r => r.data);
-export const getBriefing = () => api.get('/api/briefing').then(r => r.data);
+export const getMacro = () => delay(macroData);
+export const getScanner = () => delay(scannerData);
+export const getStock = (symbol) => {
+  const data = stocksMap[symbol?.toUpperCase()];
+  if (!data) return Promise.reject(new Error(`Stock ${symbol} not found`));
+  return delay(data);
+};
+export const getPortfolio = () => delay(portfolioData);
+export const getBriefing = () => delay(briefingData);
